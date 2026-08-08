@@ -1,3 +1,5 @@
+import type { SQLiteDatabase } from 'expo-sqlite';
+
 import { getDatabase } from '@/db/client';
 import { emptyToNull, toFilament, type FilamentRow } from '@/db/rows';
 import type { Filament, FilamentStatus } from '@/domain/types';
@@ -156,6 +158,34 @@ export async function markOpened(id: number, openedAt: string): Promise<void> {
          updated_at = ?
      WHERE id = ?`,
     [openedAt, nowISO(), id],
+  );
+}
+
+/**
+ * 未開封のまま消費されたフィラメントを「使用中」に切り替える。
+ *
+ * 印刷ログの登録や使用量の減算は「そのスプールを使った」ことを意味するので、
+ * 未開封のままだと残量だけ減って、乾燥推奨判定（未開封は対象外）にもホームの
+ * 「使用中の本数」にも入らない状態になってしまう。
+ *
+ * 開封日が未設定なら合わせて記録する。すでに入っている開封日は上書きしない。
+ * 判定と更新を 1 文で行うため、同時に呼ばれても二重に切り替わらない。
+ *
+ * 呼び出し側のトランザクションに参加させたいので、db を引数で受け取る。
+ */
+export async function markOpenedIfUnopened(
+  db: SQLiteDatabase,
+  filamentId: number,
+  openedAt: string,
+  updatedAt: string,
+): Promise<void> {
+  await db.runAsync(
+    `UPDATE filaments
+     SET status = 'in_use',
+         opened_at = COALESCE(opened_at, ?),
+         updated_at = ?
+     WHERE id = ? AND status = 'unopened'`,
+    [openedAt, updatedAt, filamentId],
   );
 }
 

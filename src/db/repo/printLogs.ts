@@ -1,8 +1,9 @@
 import { getDatabase } from '@/db/client';
+import { markOpenedIfUnopened } from '@/db/repo/filaments';
 import { emptyToNull, toPrintLog, type PrintLogRow } from '@/db/rows';
 import { applySubtract, materialCostYen, unitPriceYen, type WeightUpdate } from '@/domain/calc';
 import type { PrintLog, PrintResult } from '@/domain/types';
-import { nowISO } from '@/utils/date';
+import { nowISO, toDateOnly } from '@/utils/date';
 
 export type PrintLogInput = {
   filamentId: number;
@@ -109,6 +110,15 @@ export async function createPrintLog(input: PrintLogInput): Promise<CreatePrintL
         input.printedAt,
         `印刷ログ #${printLogId}`,
       ],
+    );
+
+    // 印刷したということは開封済みなので、未開封のままにはしない。
+    // 開封日は印刷日とする（その日には開いていたはずなので）
+    await markOpenedIfUnopened(
+      db,
+      input.filamentId,
+      toDateOnly(input.printedAt),
+      timestamp,
     );
   });
 
