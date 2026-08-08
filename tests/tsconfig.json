@@ -8,5 +8,8 @@
     "types": ["node"],
     "jsx": "react-jsx"
   },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts"],
+  // 親の exclude（"tests"）は子の位置に合わせて "../tests" に書き換えられ、
+  // ここから見ると tests ディレクトリ自身を除外してしまう。空で上書きする
+  "exclude": []
 }

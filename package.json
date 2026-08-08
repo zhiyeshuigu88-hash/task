@@ -19,15 +19,15 @@
     "expo-file-system": "~18.1.9",
     "expo-linking": "~7.1.4",
     "expo-notifications": "~0.31.2",
-    "expo-router": "~5.0.7",
+    "expo-router": "~5.1.11",
     "expo-sharing": "~13.1.5",
     "expo-sqlite": "~15.2.9",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
-    "react-native": "0.79.2",
+    "react-native": "0.79.6",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-safe-area-context": "5.4.0",
-    "react-native-screens": "~4.10.0",
+    "react-native-screens": "~4.11.1",
     "react-native-svg": "15.11.2"
   },
   "devDependencies": {
