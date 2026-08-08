@@ -1,0 +1,15 @@
+{
+  // テストは Node の test runner + 型ストリッピングで直接実行する。
+  // そのため相対 import に .ts 拡張子が必要で、node の型定義も要る。
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node"],
+    "jsx": "react-jsx"
+  },
+  "include": ["./**/*.ts"],
+  // 親の exclude（"tests"）は子の位置に合わせて "../tests" に書き換えられ、
+  // ここから見ると tests ディレクトリ自身を除外してしまう。空で上書きする
+  "exclude": []
+}

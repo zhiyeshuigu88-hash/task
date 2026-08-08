@@ -1,0 +1,38 @@
+name: CI
+
+# 型チェックとテストを CI で回す。
+# 手元に依存関係を入れられない環境からでも、PR 上で結果を確認できるようにするのが狙い。
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: 型チェックとテスト
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # tests は Node の型ストリッピングでそのまま .ts を実行するため 22.18 以上が要る
+      - name: Node.js をセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # package-lock.json をコミットしていないため npm ci ではなく install を使う
+      - name: 依存関係をインストール
+        run: npm install --no-audit --no-fund
+
+      # SDK と依存バージョンのズレを知らせる。ズレていても後続は流したいので落とさない
+      - name: Expo の依存バージョンを確認
+        run: npx expo install --check
+        continue-on-error: true
+
+      - name: 型チェック
+        run: npm run typecheck
+
+      - name: テスト
+        run: npm test
