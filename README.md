@@ -28,12 +28,15 @@ eas build --profile development --platform ios   # EAS で作る場合
 ### 検証コマンド
 
 ```bash
-npm test         # ドメイン計算ロジックのテスト（Node 標準の test runner）
-npm run typecheck # tsc --noEmit
+npm test          # ドメイン計算ロジックのテスト（Node 標準の test runner）
+npm run typecheck # アプリと tests の両方を tsc でチェック
 ```
 
 `npm test` は React Native を起動せずに走ります。`src/domain/calc.ts` が実行時 import を
 持たない純粋関数だけで構成されており、Node の型ストリッピングでそのまま実行できるためです。
+
+型チェックは 2 つの tsconfig に分かれています。tests は Node の test runner で直接実行する都合上、
+相対 import に `.ts` 拡張子が必要で node の型定義も要るため、`tests/tsconfig.json` で別に見ています。
 
 ---
 
@@ -130,9 +133,14 @@ tests/calc.test.ts      ドメインロジックのテスト
 
 ## 既知の制約
 
-- **このリポジトリでは依存関係のインストール・型チェック・実機動作確認を行っていません。**
-  作成環境から npm registry への通信がブロックされていたためです。手元で
+- **依存関係のインストールと実機動作確認は行えていません。** 作成環境から npm registry への通信が
+  組織のポリシーで遮断されている（`registry.npmjs.org` が 403）ためです。手元で
   `npm install && npx expo install --fix && npm run typecheck` を実行してから起動してください。
+- 作成環境で確認できた範囲は次のとおりです。
+  - `npm test` — 28件パス
+  - `src/domain` と `src/utils` の厳密な型チェック（`strict` + `noUncheckedIndexedAccess`）— エラーなし
+  - 全ファイルの構文チェックと import 解決 — 問題なし
+  - React Native / Expo の型に依存する部分（`app/`・`src/ui/`・`src/db/`）は未検証です
 - スライサー / プリンターとの自動連携、QR・バーコード入力、複数ユーザー、スケール自動計測は
   要件定義書のスコープ外のため未実装です。
 - AMS 等のマルチマテリアル運用は v1 の想定に含めていません。

@@ -1,6 +1,7 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "noEmit": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
@@ -8,5 +9,7 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
-  "exclude": ["node_modules"]
+  // tests は Node の test runner で動かすため、型の前提（node の型・.ts 拡張子付き import）が
+  // アプリ側と異なる。tests/tsconfig.json で別途チェックする
+  "exclude": ["node_modules", "tests"]
 }
