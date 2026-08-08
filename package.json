@@ -8,6 +8,7 @@
     "ios": "expo start --ios",
     "android": "expo start --android",
     "typecheck": "tsc --noEmit && tsc -p tests/tsconfig.json",
+    "type-check": "npm run typecheck",
     "test": "node --test tests/*.test.ts"
   },
   "dependencies": {
