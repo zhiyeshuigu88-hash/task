@@ -1,8 +1,9 @@
 import { getDatabase } from '@/db/client';
+import { markOpenedIfUnopened } from '@/db/repo/filaments';
 import { emptyToNull, toWeightAdjustment, type WeightAdjustmentRow } from '@/db/rows';
 import { applyMeasure, applySubtract, type WeightUpdate } from '@/domain/calc';
 import type { AdjustMethod, WeightAdjustment } from '@/domain/types';
-import { nowISO } from '@/utils/date';
+import { nowISO, todayISO } from '@/utils/date';
 
 const SELECT_COLUMNS = `
   id, filament_id, method, value_g, resulting_weight_g, adjusted_at, note
@@ -66,6 +67,12 @@ export async function adjustWeight(input: {
         emptyToNull(input.note),
       ],
     );
+
+    // 使用量を引いたということは開封済み。
+    // 実測は未開封のスプールを量り直しただけのこともあるので対象にしない
+    if (input.method === 'subtract') {
+      await markOpenedIfUnopened(db, input.filamentId, todayISO(), timestamp);
+    }
   });
 
   return update;

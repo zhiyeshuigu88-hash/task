@@ -175,6 +175,12 @@ export default function NewPrintLogScreen() {
         />
       </Field>
 
+      {selected?.status === 'unopened' ? (
+        <Text style={{ color: theme.colors.textMuted, fontSize: 12, marginTop: -theme.spacing(1) }}>
+          未開封のフィラメントです。記録すると「使用中」になり、開封日に印刷日が入ります
+        </Text>
+      ) : null}
+
       {selected ? (
         <Card>
           <InfoRow label="1gあたり単価" value={`¥${selected.unitPriceYen.toFixed(2)}/g`} />

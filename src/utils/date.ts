@@ -19,6 +19,11 @@ export function nowISO(date: Date = new Date()): string {
   return `${todayISO(date)}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
+/** ISO8601 から日付部分 'YYYY-MM-DD' を取り出す。取り出せなければ今日を返す */
+export function toDateOnly(value: string): string {
+  return /^(\d{4}-\d{2}-\d{2})/.exec(value)?.[1] ?? todayISO();
+}
+
 /** 'YYYY-MM-DD' / ISO8601 を '2026/08/08' 形式にする */
 export function formatDate(value: string | null | undefined): string {
   if (!value) return '—';
