@@ -36,3 +36,9 @@ jobs:
 
       - name: テスト
         run: npm test
+
+      # 型が通ってもバンドルできるとは限らない。Metro に実際に通して、
+      # パスエイリアス（@/）の解決や babel 設定まで含めて成立することを確かめる。
+      # ここは Xcode を必要としないので Linux ランナーで実行できる
+      - name: バンドルできるか確認
+        run: npx expo export --platform ios --output-dir dist
